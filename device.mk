@@ -66,6 +66,11 @@ DEVICE_PACKAGE_OVERLAYS += \
 # Powerhint
 EAS_POWERHINT_VARIANT := sdm636
 
+
+# Recorder
+PRODUCT_PACKAGES += \
+    KimciRecorder
+
 # Ramdisk
 PRODUCT_PACKAGES += \
     fstab.qcom \
