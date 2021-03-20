@@ -27,6 +27,7 @@
 
 #include <cstdlib>
 #include <fstream>
+#include <vector>
 #include <string.h>
 #include <sys/sysinfo.h>
 #include <unistd.h>
@@ -58,42 +59,52 @@ void property_override(string prop, string value)
         __system_property_add(prop.c_str(), prop.size(), value.c_str(), value.size());
 }
 
-void property_override(char const prop[], char const value[])
-{
-    prop_info *pi;
+std::vector<std::string> ro_props_default_source_order = {
+        "", "odm.", "product.", "system.", "vendor.",
+};
 
-    pi = (prop_info*) __system_property_find(prop);
+void property_override(char const prop[], char const value[], bool add = true) {
+    prop_info* pi;
+
+    pi = (prop_info*)__system_property_find(prop);
     if (pi)
         __system_property_update(pi, value, strlen(value));
-    else
+    else if (add)
         __system_property_add(prop, strlen(prop), value, strlen(value));
 }
 
-void property_override_dual(char const system_prop[],
-        char const vendor_prop[], char const value[])
-{
-    property_override(system_prop, value);
-    property_override(vendor_prop, value);
+static void init_setup_model_properties() {
+    const auto set_ro_build_prop = [](const std::string& source, const std::string& prop,
+                                      const std::string& value) {
+        auto prop_name = "ro." + source + "build." + prop;
+        property_override(prop_name.c_str(), value.c_str(), false);
+    };
+
+    const auto set_ro_product_prop = [](const std::string& source, const std::string& prop,
+                                        const std::string& value) {
+        auto prop_name = "ro.product." + source + prop;
+        property_override(prop_name.c_str(), value.c_str(), false);
+    };
+
+    std::ifstream fin;
+    std::string buf;
+
+    fin.open("/proc/cmdline");
+    while (std::getline(fin, buf, ' '))
+        if (buf.find("androidboot.hwc") != std::string::npos) break;
+    fin.close();
+
+    if (buf.find("CN") != std::string::npos || buf.find("Global") != std::string::npos) {
+        for (const auto& source : ro_props_default_source_order) {
+            set_ro_product_prop(source, "model", "Redmi Note 5");
+        }
+    } else {
+        for (const auto& source : ro_props_default_source_order) {
+            set_ro_product_prop(source, "model", "Redmi Note 5 Pro");
+        }
+    }
 }
 
-void vendor_load_properties()
-{
-   std::string product = GetProperty("ro.product.vendor.device", "");	
-   if (product.find("whyred") != std::string::npos)
-   {
-  	std::string region = GetProperty("ro.boot.hwc", "");
-
-    if (region.find("CN") != std::string::npos || region.find("Global") != std::string::npos || region.find("GLOBAL") != std::string::npos)
-	{
-        property_override_dual("ro.product.model", "ro.vendor.product.model", "Redmi Note 5");
-        property_override_dual("ro.product.odm.model", "ro.product.system.model", "Redmi Note 5");
-        property_override_dual("ro.product.vendor.model", "persist.vendor.camera.exif.model", "Redmi Note 5");
-	}
-	else
-	{
-        property_override_dual("ro.product.model", "ro.vendor.product.model", "Redmi Note 5 Pro");
-        property_override_dual("ro.product.odm.model", "ro.product.system.model", "Redmi Note 5 Pro");
-        property_override_dual("ro.product.vendor.model", "persist.vendor.camera.exif.model", "Redmi Note 5 Pro");
-	}
-  }
+void vendor_load_properties() {
+    init_setup_model_properties();
 }
