@@ -83,5 +83,9 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     WhyredWifiOverlay
 
+# XiaomiParts
+PRODUCT_PACKAGES += \
+   XiaomiParts
+
 # Inherit the proprietary files
 $(call inherit-product, vendor/xiaomi/whyred/whyred-vendor.mk)
