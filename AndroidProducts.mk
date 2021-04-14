@@ -14,9 +14,9 @@
 # limitations under the License.
 
 PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/derp_whyred.mk
+    $(LOCAL_DIR)/ssos_whyred.mk
 
 COMMON_LUNCH_CHOICES := \
-    derp_whyred-user \
-    derp_whyred-userdebug \
-    derp_whyred-eng
+    ssos_whyred-user \
+    ssos_whyred-userdebug \
+    ssos_whyred-eng
