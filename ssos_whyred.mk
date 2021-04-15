@@ -20,19 +20,10 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/product_launched_with_o_mr1.mk)
 
 # Enable updating of APEXes
-$(call inherit-product, $(SRC_TARGET_DIR)/product/updatable_apex.mk)
+#$(call inherit-product, $(SRC_TARGET_DIR)/product/updatable_apex.mk)
 
 # Inherit some common PixelExperience stuff.
 $(call inherit-product, vendor/ssos/config/common_full_phone.mk)
-TARGET_GAPPS_ARCH := arm64
-USE_GAPPS := true
-TARGET_BOOT_ANIMATION_RES := 1080
-TARGET_FACE_UNLOCK_SUPPORTED := true
-IS_PHONE := true
-SSOS_BUILDTYPE := Unofficial
-
-PRODUCT_PRODUCT_PROPERTIES += \
-  ro.ssos.cpu=SDM636
 
 # Inherit from whyred device
 $(call inherit-product, $(LOCAL_PATH)/device.mk)
@@ -51,6 +42,22 @@ PRODUCT_GMS_CLIENTID_BASE := android-xiaomi
 TARGET_VENDOR_PRODUCT_NAME := whyred
 
 PRODUCT_BUILD_PROP_OVERRIDES += \
-    PRIVATE_BUILD_DESC="redfin-user 11 RQ2A.210405.005 7181113 release-keys"
+    PRIVATE_BUILD_DESC="whyred-user 8.1.0 OPM1.171019.011 V9.5.11.0.OEIMIFA release-keys"
 
 BUILD_FINGERPRINT := google/redfin/redfin:11/RQ2A.210405.005/7181113:user/release-keys
+
+PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+    ro.build.fingerprint=$(BUILD_FINGERPRINT)
+
+#Gapps
+USE_GAPPS := true
+IS_PHONE := true
+TARGET_GAPPS_ARCH := arm64
+
+# Inherit ShapeShiftOS UNOfficial build stuff.
+SSOS_BUILD_TYPE := UNOFFICIAL
+TARGET_FACE_UNLOCK_SUPPORTED := true
+TARGET_BOOT_ANIMATION_RES := 1080
+
+PRODUCT_PRODUCT_PROPERTIES += \
+  ro.ssos.cpu=SDM636

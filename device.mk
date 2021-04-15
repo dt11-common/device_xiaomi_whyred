@@ -29,6 +29,9 @@ DEVICE_PATH := device/xiaomi/whyred
 # Setup dalvik vm configs
 $(call inherit-product, frameworks/native/build/phone-xhdpi-4096-dalvik-heap.mk)
 
+# APEX
+ENABLE_APEX := true
+
 # Inherit properties.mk
 $(call inherit-product, $(DEVICE_PATH)/properties.mk)
 
